@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0e1014;
+  --foreground: #f7f5f1;
+}
+
+@theme inline {
+  --color-bg: #0e1014;
+  --color-surface: #14161b;
+  --color-card: #1b1e25;
+  --color-border: #2a2d35;
+  --color-text: #f7f5f1;
+  --color-muted: #787e8c;
+  --color-muted-2: #9ca3af;
+  --color-faint: #4a4f5a;
+
+  --color-amber: #e8a33d;
+  --color-amber-light: #f4c572;
+  --color-success: #3ed9a3;
+
+  --color-kakao: #f4d35e;
+  --color-instagram: #e8a33d;
+  --color-linkedin: #4fb3e8;
+  --color-facebook: #5b8def;
+  --color-phone: #3ed9a3;
+  --color-email: #c6a8ff;
+
+  --font-heading: var(--font-space-grotesk);
+  --font-body: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), sans-serif;
+}
+
+@keyframes tap-ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.65;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+.animate-tap-ripple {
+  animation: tap-ripple 1.1s ease-out both;
+}

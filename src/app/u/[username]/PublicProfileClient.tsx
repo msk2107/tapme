@@ -1,0 +1,199 @@
+"use client";
+
+import { useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
+import { Check, Download, ExternalLink, Sparkles } from "lucide-react";
+import MobileShell from "@/components/MobileShell";
+import { FIELD_META, channelHref } from "@/lib/fields";
+import { buildVCardText, vcardFilename } from "@/lib/vcard";
+import { createClient } from "@/lib/supabase/client";
+import type { FieldId } from "@/lib/types";
+
+const DEEP_LINK_FIELDS = new Set<FieldId>(["kakao", "instagram", "linkedin", "facebook"]);
+
+interface Props {
+  ownerId: string;
+  name: string;
+  title: string;
+  company: string;
+  eventName: string | null;
+  visibleFields: FieldId[];
+  values: Partial<Record<FieldId, string>>;
+  publicUrl: string;
+}
+
+export default function PublicProfileClient({
+  ownerId,
+  name,
+  title,
+  company,
+  eventName,
+  visibleFields,
+  values,
+  publicUrl,
+}: Props) {
+  const [selected, setSelected] = useState<Partial<Record<FieldId, boolean>>>(() => {
+    const init: Partial<Record<FieldId, boolean>> = {};
+    visibleFields.forEach((id) => {
+      init[id] = true;
+    });
+    return init;
+  });
+  const [saved, setSaved] = useState(false);
+  const [pending, setPending] = useState(false);
+
+  const toggle = (id: FieldId) => setSelected((s) => ({ ...s, [id]: !s[id] }));
+
+  const handleSave = async () => {
+    const chosen = visibleFields.filter((id) => selected[id]);
+    if (chosen.length === 0) return;
+    setPending(true);
+
+    const text = buildVCardText({ name, title, company }, values, chosen);
+    const blob = new Blob([text], { type: "text/vcard" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = vcardFilename(name);
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    try {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      let viewerName: string | null = null;
+      if (user) {
+        const { data: viewerProfile } = await supabase
+          .from("profiles")
+          .select("name")
+          .eq("id", user.id)
+          .maybeSingle<{ name: string }>();
+        viewerName = viewerProfile?.name || user.email || null;
+      }
+      await fetch("/api/exchanges", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ownerId,
+          viewerId: user?.id ?? null,
+          viewerName,
+          eventName,
+          savedFields: chosen,
+        }),
+      });
+    } catch {
+      // 기록 저장 실패는 vCard 다운로드 경험에 영향 주지 않도록 조용히 무시
+    }
+
+    setPending(false);
+    setSaved(true);
+  };
+
+  return (
+    <MobileShell>
+      <div className="px-4 pt-2 pb-8">
+        {publicUrl && (
+          <div className="flex justify-center mb-5">
+            <div className="p-3 bg-[#1B1E25] border border-border rounded-xl">
+              <QRCodeSVG value={publicUrl} size={120} bgColor="#1B1E25" fgColor="#F7F5F1" level="M" />
+            </div>
+          </div>
+        )}
+
+        <div className="text-center mb-5">
+          <p className="font-heading text-2xl font-bold text-text">{name || "이름 미등록"}</p>
+          {(title || company) && (
+            <p className="font-body text-[13px] text-muted-2 mt-1">
+              {[title, company].filter(Boolean).join(" · ")}
+            </p>
+          )}
+          {eventName && (
+            <span className="inline-flex items-center gap-1 mt-2 font-body text-[11px] font-semibold text-amber bg-amber/10 border border-amber/30 rounded-full px-2.5 py-1">
+              <Sparkles size={11} /> {eventName}
+            </span>
+          )}
+        </div>
+
+        {visibleFields.length === 0 ? (
+          <p className="text-center font-body text-[12.5px] text-faint py-8">공개된 연락처가 없어요.</p>
+        ) : saved ? (
+          <div className="text-center py-6">
+            <div className="w-11 h-11 rounded-full bg-success/15 flex items-center justify-center mx-auto mb-3">
+              <Check size={20} className="text-success" />
+            </div>
+            <p className="font-heading text-[15px] font-semibold text-text mb-1">저장 완료!</p>
+            <p className="font-body text-[12.5px] text-muted">연락처 파일이 다운로드됐어요.</p>
+          </div>
+        ) : (
+          <>
+            <p className="font-body text-[11.5px] text-muted mb-2">저장할 항목을 선택하세요</p>
+            <div className="flex flex-col gap-1.5 mb-4">
+              {visibleFields.map((id) => {
+                const meta = FIELD_META[id];
+                const Icon = meta.icon;
+                const on = !!selected[id];
+                return (
+                  <div
+                    key={id}
+                    className="w-full flex items-center gap-2 rounded-lg border px-2.5 py-2.5"
+                    style={{
+                      borderColor: on ? meta.color : "var(--color-border)",
+                      background: on ? `${meta.color}14` : "transparent",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => toggle(id)}
+                      className="flex items-center gap-2.5 flex-1 min-w-0 text-left cursor-pointer"
+                    >
+                      <Icon size={15} color={meta.color} />
+                      <div className="flex-1 min-w-0">
+                        <div className="font-body text-[12.5px] text-text font-medium">{meta.label}</div>
+                        <div className="font-mono text-[10.5px] text-muted truncate">{values[id]}</div>
+                      </div>
+                      <div
+                        className="w-[18px] h-[18px] rounded-[5px] border flex items-center justify-center shrink-0"
+                        style={{
+                          borderColor: on ? meta.color : "var(--color-faint)",
+                          background: on ? meta.color : "transparent",
+                        }}
+                      >
+                        {on && <Check size={11} color="#14161B" strokeWidth={3} />}
+                      </div>
+                    </button>
+                    {DEEP_LINK_FIELDS.has(id) && (
+                      <a
+                        href={channelHref(id, values[id] ?? "")}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 p-1.5 rounded-md border border-border text-muted hover:text-text"
+                        aria-label={`${meta.label} 열기`}
+                      >
+                        <ExternalLink size={13} />
+                      </a>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={pending}
+              className="w-full flex items-center justify-center gap-2 bg-amber text-bg font-body text-[13.5px] font-bold rounded-lg py-3 disabled:opacity-60 cursor-pointer"
+            >
+              <Download size={15} /> {pending ? "저장 중..." : "선택한 항목 저장하기"}
+            </button>
+          </>
+        )}
+
+        <p className="text-center font-body text-[10.5px] text-faint mt-6">TapMe로 만든 디지털 명함</p>
+      </div>
+    </MobileShell>
+  );
+}
