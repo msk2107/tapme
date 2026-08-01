@@ -22,10 +22,11 @@ npm run dev
 
 1. [supabase.com](https://supabase.com) 에서 새 프로젝트 생성 (region은 Seoul 권장)
 2. 좌측 메뉴 **SQL Editor** → New query → [`supabase/schema.sql`](supabase/schema.sql) 파일 내용을 전체 복사해 붙여넣고 **Run**
-3. 좌측 메뉴 **Settings → API**에서 다음 값을 복사해 `.env.local`에 붙여넣기
-   - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
-   - `anon public` key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `service_role` key (Reveal 클릭) → `SUPABASE_SERVICE_ROLE_KEY`
+3. 다음 값을 복사해 `.env.local`에 붙여넣기
+   - **Settings → Data API**의 `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
+   - **Settings → API Keys**의 `Publishable key`(`sb_publishable_...`, 옛 이름 `anon key`) → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - **Settings → API Keys**의 `Secret key`(`sb_secret_...`, 옛 이름 `service_role key`, Reveal 클릭) → `SUPABASE_SERVICE_ROLE_KEY`
+   - "Legacy API Keys" 탭에 있는 옛날 이름의 `anon`/`service_role` 키를 써도 동일하게 동작합니다.
 4. **Authentication → URL Configuration**에서 Redirect URLs에 다음을 추가
    - `http://localhost:3000/auth/callback` (로컬 개발용)
    - 배포 후 Vercel 도메인의 `/auth/callback` 도 추가 (아래 5단계 참고)
