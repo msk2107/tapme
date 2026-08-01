@@ -6,7 +6,7 @@ import type { ExchangeRow, FieldId } from "@/lib/types";
 
 function formatTime(iso: string): string {
   const d = new Date(iso);
-  return d.toLocaleString("ko-KR", {
+  return d.toLocaleString("en-US", {
     timeZone: "Asia/Seoul",
     month: "2-digit",
     day: "2-digit",
@@ -32,14 +32,14 @@ export default async function HistoryPage() {
   return (
     <div className="px-4 pt-3 pb-6">
       <p className="font-heading text-xs tracking-wider text-muted uppercase mb-3">
-        내 카드를 받아간 사람
+        People who saved your card
       </p>
 
       {(!exchanges || exchanges.length === 0) && (
         <div className="text-center py-10 text-faint font-body text-[12.5px] leading-relaxed">
-          아직 기록이 없습니다.
+          No history yet.
           <br />
-          &lsquo;공유&rsquo; 탭에서 QR이나 링크를 공유해보세요.
+          Share your QR or link from the &lsquo;Share&rsquo; tab.
         </div>
       )}
 
@@ -48,14 +48,14 @@ export default async function HistoryPage() {
           <div key={ex.id} className="bg-card border border-border rounded-xl p-3">
             <div className="flex items-center justify-between mb-1.5">
               <span className="font-heading text-[13.5px] font-semibold text-text">
-                {ex.viewer_name || "익명 방문자"}
+                {ex.viewer_name || "Anonymous visitor"}
               </span>
               <span className="flex items-center gap-1 font-mono text-[10px] text-muted">
                 <Clock size={10} /> {formatTime(ex.created_at)}
               </span>
             </div>
             <div className="font-body text-[11.5px] text-muted-2 mb-2">
-              {ex.event_name || "미지정 행사"}
+              {ex.event_name || "No event"}
             </div>
             <div className="flex flex-wrap gap-1.5">
               {ex.saved_fields.map((f) => {

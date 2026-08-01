@@ -59,7 +59,7 @@ export default function EditForm({
         })
         .eq("id", card.id);
       if (!error) {
-        setSaveStatus("저장됨");
+        setSaveStatus("Saved");
         setTimeout(() => setSaveStatus(""), 1200);
       }
     }, 600);
@@ -70,24 +70,24 @@ export default function EditForm({
 
   return (
     <div className="px-4 pt-3 pb-6">
-      <p className="font-heading text-xs tracking-wider text-muted uppercase mb-1">내 정보</p>
+      <p className="font-heading text-xs tracking-wider text-muted uppercase mb-1">My Info</p>
       <input
         value={card.name}
         onChange={(e) => update("name", e.target.value)}
-        placeholder="이름"
+        placeholder="Name"
         className="w-full bg-transparent border-0 border-b-2 border-border text-text font-heading text-[22px] font-semibold py-1.5 mb-2 outline-none focus:border-amber/60"
       />
       <div className="flex gap-2 mb-1.5">
         <input
           value={card.title}
           onChange={(e) => update("title", e.target.value)}
-          placeholder="직함"
+          placeholder="Title"
           className="flex-1 min-w-0 bg-card border border-border rounded-lg px-2.5 py-2 text-[#D5D8DE] font-body text-[13px] outline-none focus:border-amber/60"
         />
         <input
           value={card.company}
           onChange={(e) => update("company", e.target.value)}
-          placeholder="소속"
+          placeholder="Company"
           className="flex-1 min-w-0 bg-card border border-border rounded-lg px-2.5 py-2 text-[#D5D8DE] font-body text-[13px] outline-none focus:border-amber/60"
         />
       </div>
@@ -98,17 +98,17 @@ export default function EditForm({
       >
         <div className="min-w-0">
           <p className="font-body text-[10.5px] text-faint uppercase tracking-wide mb-0.5">
-            현재 참석 중인 행사
+            Currently attending
           </p>
           <p className="font-body text-[13px] text-text truncate">
-            {currentEventName ?? "설정된 행사 없음"}
+            {currentEventName ?? "No event set"}
           </p>
         </div>
         <ChevronRight size={16} className="text-muted shrink-0" />
       </Link>
 
       <p className="font-heading text-xs tracking-wider text-muted uppercase mb-2.5">
-        공유 채널 (오른쪽 스위치로 공개/비공개)
+        Share channels (toggle on the right to show/hide)
       </p>
       {FIELD_ORDER.map((id) => (
         <div key={id} className="flex items-center gap-2">
@@ -130,7 +130,7 @@ export default function EditForm({
         className="text-center font-body text-[11.5px] py-1.5 mt-1"
         style={{ color: saveStatus ? "var(--color-success)" : "var(--color-muted)" }}
       >
-        {saveStatus || "변경사항은 자동 저장됩니다"}
+        {saveStatus || "Changes are saved automatically"}
       </div>
     </div>
   );

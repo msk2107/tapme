@@ -13,17 +13,17 @@ export default function ShareView({ publicUrl, name }: { publicUrl: string; name
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
-      // clipboard 접근 실패 시 조용히 무시 (수동 복사는 여전히 가능)
+      // Ignore clipboard failures — the link is still visible to copy manually
     }
   };
 
   return (
     <div className="px-4 pt-4 pb-6 text-center">
       <p className="font-body text-[12.5px] text-muted-2 mb-1">
-        {name ? `${name}님의 명함` : "내 명함"}
+        {name ? `${name}'s card` : "My card"}
       </p>
       <p className="font-mono text-[10.5px] text-faint mb-5">
-        NFC 태그를 탭하거나, 아래 QR을 스캔하면 프로필이 열립니다
+        Tap an NFC tag, or scan the QR below to open the profile
       </p>
 
       <div className="inline-flex flex-col items-center gap-3 p-4 bg-card border border-border rounded-2xl">
@@ -37,7 +37,7 @@ export default function ShareView({ publicUrl, name }: { publicUrl: string; name
           />
         </div>
         <span className="flex items-center gap-1.5 font-body text-[11px] text-muted">
-          <QrCode size={12} /> QR 스캔으로 프로필 열기
+          <QrCode size={12} /> Scan QR to open profile
         </span>
       </div>
 
@@ -51,7 +51,7 @@ export default function ShareView({ publicUrl, name }: { publicUrl: string; name
           className="shrink-0 flex items-center gap-1 text-[11.5px] font-body font-semibold text-amber cursor-pointer"
         >
           {copied ? <Check size={13} /> : <Copy size={13} />}
-          {copied ? "복사됨" : "복사"}
+          {copied ? "Copied" : "Copy"}
         </button>
       </div>
 
@@ -61,7 +61,7 @@ export default function ShareView({ publicUrl, name }: { publicUrl: string; name
         rel="noopener noreferrer"
         className="mt-3 w-full flex items-center justify-center gap-1.5 border border-border rounded-lg py-2.5 font-body text-[12.5px] font-semibold text-muted-2 hover:text-text transition-colors"
       >
-        <ExternalLink size={13} /> 내 프로필 미리보기
+        <ExternalLink size={13} /> Preview my profile
       </a>
     </div>
   );

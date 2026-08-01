@@ -34,11 +34,11 @@ export default function LoginForm({ next }: { next?: string }) {
   if (status === "sent") {
     return (
       <div className="px-4 py-14 text-center">
-        <p className="font-heading text-lg font-semibold text-text mb-2">메일함을 확인해주세요</p>
+        <p className="font-heading text-lg font-semibold text-text mb-2">Check your inbox</p>
         <p className="font-body text-[13px] text-muted leading-relaxed">
-          <span className="text-text">{email}</span> 주소로 로그인 링크를 보냈어요.
+          We sent a login link to <span className="text-text">{email}</span>.
           <br />
-          메일의 링크를 누르면 자동으로 로그인됩니다.
+          Click the link in the email to sign in automatically.
         </p>
       </div>
     );
@@ -46,9 +46,9 @@ export default function LoginForm({ next }: { next?: string }) {
 
   return (
     <div className="px-4 py-8">
-      <p className="font-heading text-2xl font-bold text-text mb-1">로그인</p>
+      <p className="font-heading text-2xl font-bold text-text mb-1">Log in</p>
       <p className="font-body text-[13px] text-muted mb-6">
-        이메일로 받은 링크를 클릭하면 비밀번호 없이 바로 로그인돼요.
+        Click the link we email you to sign in — no password needed.
       </p>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
@@ -64,7 +64,7 @@ export default function LoginForm({ next }: { next?: string }) {
           disabled={status === "sending"}
           className="bg-amber text-bg font-body text-sm font-bold rounded-lg py-2.5 disabled:opacity-60 cursor-pointer"
         >
-          {status === "sending" ? "전송 중..." : "로그인 링크 받기"}
+          {status === "sending" ? "Sending..." : "Send login link"}
         </button>
         {status === "error" && <p className="text-[12px] text-red-400">{error}</p>}
       </form>

@@ -29,15 +29,15 @@ export default async function EventsPage() {
 
   return (
     <div className="px-4 pt-3 pb-6">
-      <p className="font-heading text-xs tracking-wider text-muted uppercase mb-2.5">행사 등록</p>
+      <p className="font-heading text-xs tracking-wider text-muted uppercase mb-2.5">Add an event</p>
       <AddEventForm />
 
       <p className="font-heading text-xs tracking-wider text-muted uppercase mt-6 mb-2.5">
-        내 행사 목록
+        My events
       </p>
       {(!events || events.length === 0) && (
         <div className="text-center py-8 text-faint font-body text-[12.5px]">
-          등록된 행사가 없어요. 위에서 행사를 추가해보세요.
+          No events yet. Add one above.
         </div>
       )}
       <div className="flex flex-col gap-2">

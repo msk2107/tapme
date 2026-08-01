@@ -72,12 +72,12 @@ export default function EventListItem({
             </span>
             {isCurrent && (
               <span className="font-body text-[10px] font-bold text-amber bg-amber/15 rounded-full px-2 py-0.5">
-                현재 행사
+                Current event
               </span>
             )}
             {isToday && !isCurrent && (
               <span className="font-body text-[10px] font-bold text-success bg-success/15 rounded-full px-2 py-0.5">
-                오늘
+                Today
               </span>
             )}
           </div>
@@ -89,7 +89,7 @@ export default function EventListItem({
           type="button"
           onClick={remove}
           disabled={pending}
-          aria-label="행사 삭제"
+          aria-label="Delete event"
           className="text-faint hover:text-red-400 shrink-0 cursor-pointer disabled:opacity-50"
         >
           <Trash2 size={15} />
@@ -103,7 +103,7 @@ export default function EventListItem({
             disabled={pending}
             className="text-[11.5px] font-body text-muted underline decoration-dotted cursor-pointer disabled:opacity-50"
           >
-            현재 행사 해제
+            Clear current event
           </button>
         ) : (
           <button
@@ -112,7 +112,7 @@ export default function EventListItem({
             disabled={pending}
             className="flex items-center gap-1 text-[11.5px] font-body font-semibold text-amber cursor-pointer disabled:opacity-50"
           >
-            <CheckCircle2 size={13} /> 이 행사를 현재 행사로 설정
+            <CheckCircle2 size={13} /> Set as current event
           </button>
         )}
       </div>

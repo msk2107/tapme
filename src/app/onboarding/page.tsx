@@ -23,9 +23,9 @@ export default async function OnboardingPage() {
   return (
     <MobileShell>
       <div className="px-4 pt-2 pb-5">
-        <p className="font-heading text-2xl font-bold text-text mb-1">프로필 만들기</p>
+        <p className="font-heading text-2xl font-bold text-text mb-1">Create your profile</p>
         <p className="font-body text-[13px] text-muted">
-          아래 아이디로 공개 프로필 주소가 만들어져요.
+          Your public profile link will be built from the username below.
         </p>
       </div>
       <OnboardingForm suggestedUsername={suggested} />

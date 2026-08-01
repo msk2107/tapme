@@ -29,42 +29,42 @@ export const FIELD_ORDER: FieldId[] = [
 export const FIELD_META: Record<FieldId, FieldMeta> = {
   kakao: {
     id: "kakao",
-    label: "카카오톡 오픈채팅",
+    label: "KakaoTalk Open Chat",
     icon: MessageCircle,
     color: "var(--color-kakao)",
     placeholder: "https://open.kakao.com/o/...",
   },
   instagram: {
     id: "instagram",
-    label: "인스타그램",
+    label: "Instagram",
     icon: Camera,
     color: "var(--color-instagram)",
     placeholder: "@username",
   },
   linkedin: {
     id: "linkedin",
-    label: "링크드인",
+    label: "LinkedIn",
     icon: Briefcase,
     color: "var(--color-linkedin)",
     placeholder: "linkedin.com/in/username",
   },
   facebook: {
     id: "facebook",
-    label: "페이스북",
+    label: "Facebook",
     icon: ThumbsUp,
     color: "var(--color-facebook)",
     placeholder: "facebook.com/username",
   },
   phone: {
     id: "phone",
-    label: "전화번호",
+    label: "Phone",
     icon: Phone,
     color: "var(--color-phone)",
-    placeholder: "010-1234-5678",
+    placeholder: "+1 555-123-4567",
   },
   email: {
     id: "email",
-    label: "이메일",
+    label: "Email",
     icon: Mail,
     color: "var(--color-email)",
     placeholder: "you@example.com",
@@ -86,7 +86,7 @@ export function visibleFieldIds(profile: Profile): FieldId[] {
   return FIELD_ORDER.filter((id) => fieldVisible(profile, id) && fieldValue(profile, id).trim());
 }
 
-/** 채널 값을 실제로 열 수 있는 링크로 정규화 (딥링크/웹 fallback 동일 URL 사용) */
+/** Normalizes a channel value into an openable link (same URL doubles as deep link and web fallback) */
 export function channelHref(id: FieldId, value: string): string {
   const v = value.trim();
   if (!v) return "#";

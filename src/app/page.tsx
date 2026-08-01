@@ -16,22 +16,22 @@ export default async function LandingPage() {
         </div>
         <h1 className="font-heading text-3xl font-bold text-text tracking-tight mb-3">TapMe</h1>
         <p className="font-body text-[14px] text-muted-2 leading-relaxed mb-10">
-          종이 명함 없이, 탭 한 번으로.
+          No more paper cards. Just one tap.
           <br />
-          NFC나 QR로 연락처를 공유하는 디지털 명함
+          Share your contact via NFC or QR — the digital business card.
         </p>
 
         <div className="flex flex-col gap-2.5 text-left mb-10">
           <div className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3">
             <QrCode size={16} className="text-amber shrink-0" />
             <span className="font-body text-[12.5px] text-muted-2">
-              앱 설치 없이 브라우저에서 바로 열람 &amp; 저장
+              Opens right in the browser &amp; saves instantly — no app install
             </span>
           </div>
           <div className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3">
             <Zap size={16} className="text-amber shrink-0" />
             <span className="font-body text-[12.5px] text-muted-2">
-              공개할 항목만 골라서 원하는 만큼만 공유
+              Share only what you choose to make public
             </span>
           </div>
         </div>
@@ -40,7 +40,7 @@ export default async function LandingPage() {
           href={user ? "/dashboard/edit" : "/login"}
           className="block w-full bg-amber text-bg font-body text-[14px] font-bold rounded-xl py-3.5"
         >
-          {user ? "내 대시보드로 이동" : "시작하기"}
+          {user ? "Go to my dashboard" : "Get started"}
         </Link>
       </div>
     </div>

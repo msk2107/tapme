@@ -86,7 +86,7 @@ export default function PublicProfileClient({
         }),
       });
     } catch {
-      // 기록 저장 실패는 vCard 다운로드 경험에 영향 주지 않도록 조용히 무시
+      // Ignore logging failures — don't let them affect the vCard download experience
     }
 
     setPending(false);
@@ -105,7 +105,7 @@ export default function PublicProfileClient({
         )}
 
         <div className="text-center mb-5">
-          <p className="font-heading text-2xl font-bold text-text">{name || "이름 미등록"}</p>
+          <p className="font-heading text-2xl font-bold text-text">{name || "Unnamed"}</p>
           {(title || company) && (
             <p className="font-body text-[13px] text-muted-2 mt-1">
               {[title, company].filter(Boolean).join(" · ")}
@@ -119,18 +119,18 @@ export default function PublicProfileClient({
         </div>
 
         {visibleFields.length === 0 ? (
-          <p className="text-center font-body text-[12.5px] text-faint py-8">공개된 연락처가 없어요.</p>
+          <p className="text-center font-body text-[12.5px] text-faint py-8">No public contact info yet.</p>
         ) : saved ? (
           <div className="text-center py-6">
             <div className="w-11 h-11 rounded-full bg-success/15 flex items-center justify-center mx-auto mb-3">
               <Check size={20} className="text-success" />
             </div>
-            <p className="font-heading text-[15px] font-semibold text-text mb-1">저장 완료!</p>
-            <p className="font-body text-[12.5px] text-muted">연락처 파일이 다운로드됐어요.</p>
+            <p className="font-heading text-[15px] font-semibold text-text mb-1">Saved!</p>
+            <p className="font-body text-[12.5px] text-muted">Your contact file has been downloaded.</p>
           </div>
         ) : (
           <>
-            <p className="font-body text-[11.5px] text-muted mb-2">저장할 항목을 선택하세요</p>
+            <p className="font-body text-[11.5px] text-muted mb-2">Choose what to save</p>
             <div className="flex flex-col gap-1.5 mb-4">
               {visibleFields.map((id) => {
                 const meta = FIELD_META[id];
@@ -171,7 +171,7 @@ export default function PublicProfileClient({
                         target="_blank"
                         rel="noopener noreferrer"
                         className="shrink-0 p-1.5 rounded-md border border-border text-muted hover:text-text"
-                        aria-label={`${meta.label} 열기`}
+                        aria-label={`Open ${meta.label}`}
                       >
                         <ExternalLink size={13} />
                       </a>
@@ -187,12 +187,12 @@ export default function PublicProfileClient({
               disabled={pending}
               className="w-full flex items-center justify-center gap-2 bg-amber text-bg font-body text-[13.5px] font-bold rounded-lg py-3 disabled:opacity-60 cursor-pointer"
             >
-              <Download size={15} /> {pending ? "저장 중..." : "선택한 항목 저장하기"}
+              <Download size={15} /> {pending ? "Saving..." : "Save selected"}
             </button>
           </>
         )}
 
-        <p className="text-center font-body text-[10.5px] text-faint mt-6">TapMe로 만든 디지털 명함</p>
+        <p className="text-center font-body text-[10.5px] text-faint mt-6">A digital business card made with TapMe</p>
       </div>
     </MobileShell>
   );

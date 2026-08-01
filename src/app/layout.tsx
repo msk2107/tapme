@@ -21,8 +21,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TapMe — 탭 한 번으로 연락처 공유",
-  description: "NFC 탭이나 QR 코드로 명함을 공유하는 디지털 명함 서비스",
+  title: "TapMe — Share your contact with one tap",
+  description: "A digital business card you share via NFC tap or QR code",
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -51,7 +51,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="ko"
+      lang="en"
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-bg text-text">

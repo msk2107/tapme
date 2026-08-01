@@ -45,7 +45,7 @@ export default function EventBanner({
       <Sparkles size={16} className="text-amber shrink-0 mt-0.5" />
       <div className="flex-1 min-w-0">
         <p className="font-body text-[12.5px] text-text leading-snug">
-          지금 <span className="font-semibold text-amber">{eventName}</span> 참석 중이신가요?
+          Are you at <span className="font-semibold text-amber">{eventName}</span> right now?
         </p>
         <div className="flex gap-2 mt-2">
           <button
@@ -54,7 +54,7 @@ export default function EventBanner({
             onClick={() => respond(true)}
             className="px-3 py-1.5 rounded-md bg-amber text-bg font-body text-[12px] font-bold cursor-pointer disabled:opacity-60"
           >
-            예, 참석 중이에요
+            Yes, I&apos;m here
           </button>
           <button
             type="button"
@@ -62,7 +62,7 @@ export default function EventBanner({
             onClick={() => respond(false)}
             className="px-3 py-1.5 rounded-md border border-border text-muted font-body text-[12px] font-semibold cursor-pointer disabled:opacity-60"
           >
-            아니요
+            No
           </button>
         </div>
       </div>

@@ -27,10 +27,10 @@ export async function createProfile(
   const name = String(formData.get("name") || "").trim();
 
   if (!isValidUsername(username)) {
-    return { error: "아이디는 영문 소문자/숫자/-/_ 조합 3~30자로 입력해주세요." };
+    return { error: "Username must be 3–30 characters: lowercase letters, numbers, -, _" };
   }
   if (!name) {
-    return { error: "이름을 입력해주세요." };
+    return { error: "Please enter your name." };
   }
 
   const { error } = await supabase.from("profiles").insert({
@@ -41,9 +41,9 @@ export async function createProfile(
 
   if (error) {
     if (error.code === "23505") {
-      return { error: "이미 사용 중인 아이디예요. 다른 아이디를 입력해주세요." };
+      return { error: "That username is already taken. Please try another." };
     }
-    return { error: "프로필 생성 중 오류가 발생했어요. 잠시 후 다시 시도해주세요." };
+    return { error: "Something went wrong creating your profile. Please try again." };
   }
 
   redirect("/dashboard/edit");

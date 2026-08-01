@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import { Pencil, CalendarClock, Radio, History } from "lucide-react";
 
 const TABS = [
-  { href: "/dashboard/edit", label: "내 카드", icon: Pencil },
-  { href: "/dashboard/events", label: "행사", icon: CalendarClock },
-  { href: "/dashboard/share", label: "공유", icon: Radio },
-  { href: "/dashboard/history", label: "기록", icon: History },
+  { href: "/dashboard/edit", label: "My Card", icon: Pencil },
+  { href: "/dashboard/events", label: "Events", icon: CalendarClock },
+  { href: "/dashboard/share", label: "Share", icon: Radio },
+  { href: "/dashboard/history", label: "History", icon: History },
 ];
 
 export default function TabBar() {
