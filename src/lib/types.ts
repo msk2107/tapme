@@ -12,6 +12,7 @@ export interface Profile {
   name: string;
   title: string;
   company: string;
+  avatar_url: string | null;
   current_event_id: string | null;
   current_event_banner_dismissed_for: string | null;
   kakao_value: string;

@@ -9,6 +9,7 @@ import ToggleSwitch from "@/components/ToggleSwitch";
 import { FIELD_ORDER, fieldValue, fieldVisible } from "@/lib/fields";
 import type { FieldId, Profile } from "@/lib/types";
 import UsernameField from "./UsernameField";
+import AvatarUpload from "./AvatarUpload";
 
 export default function EditForm({
   profile,
@@ -72,6 +73,7 @@ export default function EditForm({
   return (
     <div className="px-4 pt-3 pb-6">
       <p className="font-heading text-xs tracking-wider text-muted uppercase mb-1">My Info</p>
+      <AvatarUpload profileId={profile.id} initialAvatarUrl={profile.avatar_url} />
       <input
         value={card.name}
         onChange={(e) => update("name", e.target.value)}

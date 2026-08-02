@@ -16,6 +16,7 @@ interface Props {
   name: string;
   title: string;
   company: string;
+  avatarUrl: string | null;
   eventName: string | null;
   visibleFields: FieldId[];
   values: Partial<Record<FieldId, string>>;
@@ -27,6 +28,7 @@ export default function PublicProfileClient({
   name,
   title,
   company,
+  avatarUrl,
   eventName,
   visibleFields,
   values,
@@ -105,6 +107,14 @@ export default function PublicProfileClient({
         )}
 
         <div className="text-center mb-5">
+          {avatarUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={avatarUrl}
+              alt={name}
+              className="w-20 h-20 rounded-full object-cover border border-border mx-auto mb-3"
+            />
+          )}
           <p className="font-heading text-2xl font-bold text-text">{name || "Unnamed"}</p>
           {(title || company) && (
             <p className="font-body text-[13px] text-muted-2 mt-1">

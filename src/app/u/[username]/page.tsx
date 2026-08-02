@@ -50,6 +50,7 @@ export default async function PublicProfilePage({
       name={profile.name}
       title={profile.title}
       company={profile.company}
+      avatarUrl={profile.avatar_url}
       eventName={eventName}
       visibleFields={visibleFields}
       values={values}
