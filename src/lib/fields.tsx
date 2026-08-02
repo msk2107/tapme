@@ -1,18 +1,13 @@
-import {
-  Camera,
-  Briefcase,
-  ThumbsUp,
-  Phone,
-  Mail,
-  MessageCircle,
-  type LucideIcon,
-} from "lucide-react";
+import { Phone, Mail } from "lucide-react";
+import { FaInstagram, FaLinkedin, FaFacebook } from "react-icons/fa6";
+import { SiKakaotalk } from "react-icons/si";
+import type { IconType } from "react-icons";
 import type { FieldId, Profile } from "@/lib/types";
 
 export interface FieldMeta {
   id: FieldId;
   label: string;
-  icon: LucideIcon;
+  icon: IconType;
   color: string;
   placeholder: string;
 }
@@ -30,28 +25,28 @@ export const FIELD_META: Record<FieldId, FieldMeta> = {
   kakao: {
     id: "kakao",
     label: "KakaoTalk Open Chat",
-    icon: MessageCircle,
+    icon: SiKakaotalk,
     color: "var(--color-kakao)",
     placeholder: "https://open.kakao.com/o/...",
   },
   instagram: {
     id: "instagram",
     label: "Instagram",
-    icon: Camera,
+    icon: FaInstagram,
     color: "var(--color-instagram)",
     placeholder: "@username",
   },
   linkedin: {
     id: "linkedin",
     label: "LinkedIn",
-    icon: Briefcase,
+    icon: FaLinkedin,
     color: "var(--color-linkedin)",
     placeholder: "linkedin.com/in/username",
   },
   facebook: {
     id: "facebook",
     label: "Facebook",
-    icon: ThumbsUp,
+    icon: FaFacebook,
     color: "var(--color-facebook)",
     placeholder: "facebook.com/username",
   },
