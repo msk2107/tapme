@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isValidUsername } from "@/lib/username";
 
 export interface OnboardingState {
@@ -48,9 +49,29 @@ export async function createProfile(
 
   const ref = String(formData.get("ref") || "").trim();
   if (ref && ref !== user.id) {
+    // Snapshot the referrer's current event (cross-user read, needs the admin client).
+    const admin = createAdminClient();
+    const { data: referrerProfile } = await admin
+      .from("profiles")
+      .select("current_event_id")
+      .eq("id", ref)
+      .maybeSingle<{ current_event_id: string | null }>();
+
+    let eventName: string | null = null;
+    if (referrerProfile?.current_event_id) {
+      const { data: event } = await admin
+        .from("events")
+        .select("name")
+        .eq("id", referrerProfile.current_event_id)
+        .maybeSingle<{ name: string }>();
+      eventName = event?.name ?? null;
+    }
+
     // Best-effort: an invalid/unknown ref just fails the FK check silently
     // and shouldn't block the signup that already succeeded above.
-    await supabase.from("referrals").insert({ referrer_id: ref, referred_user_id: user.id });
+    await supabase
+      .from("referrals")
+      .insert({ referrer_id: ref, referred_user_id: user.id, event_name: eventName });
   }
 
   redirect("/dashboard/edit");

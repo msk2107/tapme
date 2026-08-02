@@ -22,15 +22,6 @@ export default async function PublicProfilePage({
 
   if (!profile) notFound();
 
-  // Count this as a view unless the profile owner is looking at their own page.
-  const viewerSupabase = await createClient();
-  const {
-    data: { user: viewer },
-  } = await viewerSupabase.auth.getUser();
-  if (!viewer || viewer.id !== profile.id) {
-    await supabase.from("profile_views").insert({ profile_id: profile.id });
-  }
-
   let eventName: string | null = null;
   if (profile.current_event_id) {
     const { data: event } = await supabase
@@ -39,6 +30,15 @@ export default async function PublicProfilePage({
       .eq("id", profile.current_event_id)
       .maybeSingle<Pick<EventRow, "name">>();
     eventName = event?.name ?? null;
+  }
+
+  // Count this as a view unless the profile owner is looking at their own page.
+  const viewerSupabase = await createClient();
+  const {
+    data: { user: viewer },
+  } = await viewerSupabase.auth.getUser();
+  if (!viewer || viewer.id !== profile.id) {
+    await supabase.from("profile_views").insert({ profile_id: profile.id, event_name: eventName });
   }
 
   const visibleFields = FIELD_ORDER.filter(
@@ -61,6 +61,7 @@ export default async function PublicProfilePage({
       title={profile.title}
       company={profile.company}
       avatarUrl={profile.avatar_url}
+      signupNumber={profile.signup_number}
       eventName={eventName}
       visibleFields={visibleFields}
       values={values}

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, CheckCircle2 } from "lucide-react";
+import { Trash2, CheckCircle2, Handshake } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { EventRow } from "@/lib/types";
 
@@ -78,6 +78,11 @@ export default function EventListItem({
             {isToday && !isCurrent && (
               <span className="font-body text-[10px] font-bold text-success bg-success/15 rounded-full px-2 py-0.5">
                 Today
+              </span>
+            )}
+            {event.is_partner && (
+              <span className="flex items-center gap-1 font-body text-[10px] font-bold text-muted-2 bg-white/5 rounded-full px-2 py-0.5">
+                <Handshake size={10} /> Partner event
               </span>
             )}
           </div>

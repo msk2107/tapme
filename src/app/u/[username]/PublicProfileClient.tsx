@@ -7,6 +7,7 @@ import MobileShell from "@/components/MobileShell";
 import { FIELD_META, channelHref } from "@/lib/fields";
 import { buildVCardText, vcardFilename } from "@/lib/vcard";
 import { createClient } from "@/lib/supabase/client";
+import { foundingLabel } from "@/lib/founding";
 import type { FieldId } from "@/lib/types";
 
 const DEEP_LINK_FIELDS = new Set<FieldId>(["kakao", "instagram", "linkedin", "facebook"]);
@@ -17,6 +18,7 @@ interface Props {
   title: string;
   company: string;
   avatarUrl: string | null;
+  signupNumber: number;
   eventName: string | null;
   visibleFields: FieldId[];
   values: Partial<Record<FieldId, string>>;
@@ -29,6 +31,7 @@ export default function PublicProfileClient({
   title,
   company,
   avatarUrl,
+  signupNumber,
   eventName,
   visibleFields,
   values,
@@ -43,8 +46,26 @@ export default function PublicProfileClient({
   });
   const [saved, setSaved] = useState(false);
   const [pending, setPending] = useState(false);
+  const [feedback, setFeedback] = useState("");
+  const [feedbackSent, setFeedbackSent] = useState(false);
+
+  const badge = foundingLabel(signupNumber);
 
   const toggle = (id: FieldId) => setSelected((s) => ({ ...s, [id]: !s[id] }));
+
+  const sendFeedback = async () => {
+    if (!feedback.trim()) return;
+    setFeedbackSent(true);
+    try {
+      await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profileId: ownerId, message: feedback.trim() }),
+      });
+    } catch {
+      // Optional, non-blocking — a failed submit just means we don't retry.
+    }
+  };
 
   const handleSave = async () => {
     const chosen = visibleFields.filter((id) => selected[id]);
@@ -121,6 +142,11 @@ export default function PublicProfileClient({
               {[title, company].filter(Boolean).join(" · ")}
             </p>
           )}
+          {badge && (
+            <span className="inline-flex items-center gap-1 mt-2 mr-1 font-body text-[10.5px] font-bold text-success bg-success/10 border border-success/30 rounded-full px-2.5 py-1">
+              {badge}
+            </span>
+          )}
           {eventName && (
             <span className="inline-flex items-center gap-1 mt-2 font-body text-[11px] font-semibold text-amber bg-amber/10 border border-amber/30 rounded-full px-2.5 py-1">
               <Sparkles size={11} /> {eventName}
@@ -139,6 +165,28 @@ export default function PublicProfileClient({
             <p className="font-body text-[12.5px] text-muted mb-5">
               Your contact file has been downloaded.
             </p>
+
+            {feedbackSent ? (
+              <p className="font-body text-[11.5px] text-success mb-5">Thanks for the feedback!</p>
+            ) : (
+              <div className="flex items-center gap-1.5 mb-5">
+                <input
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  placeholder="How was this? (optional)"
+                  className="flex-1 bg-card border border-border rounded-lg px-3 py-2 text-text font-body text-[12px] outline-none focus:border-amber/60"
+                />
+                <button
+                  type="button"
+                  onClick={sendFeedback}
+                  disabled={!feedback.trim()}
+                  className="shrink-0 font-body text-[11.5px] font-semibold text-amber disabled:opacity-40 cursor-pointer"
+                >
+                  Send
+                </button>
+              </div>
+            )}
+
             <a
               href={`/login?ref=${ownerId}`}
               className="inline-flex items-center justify-center gap-1.5 bg-amber text-bg font-body text-[13px] font-bold rounded-lg py-2.5 px-5"
