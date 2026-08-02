@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { Check, Download, ExternalLink, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Download, ExternalLink, Sparkles } from "lucide-react";
 import MobileShell from "@/components/MobileShell";
 import { FIELD_META, channelHref } from "@/lib/fields";
 import { buildVCardText, vcardFilename } from "@/lib/vcard";
@@ -136,7 +136,15 @@ export default function PublicProfileClient({
               <Check size={20} className="text-success" />
             </div>
             <p className="font-heading text-[15px] font-semibold text-text mb-1">Saved!</p>
-            <p className="font-body text-[12.5px] text-muted">Your contact file has been downloaded.</p>
+            <p className="font-body text-[12.5px] text-muted mb-5">
+              Your contact file has been downloaded.
+            </p>
+            <a
+              href="/login"
+              className="inline-flex items-center justify-center gap-1.5 bg-amber text-bg font-body text-[13px] font-bold rounded-lg py-2.5 px-5"
+            >
+              Make your own TapMe card <ArrowRight size={14} />
+            </a>
           </div>
         ) : (
           <>
@@ -202,7 +210,12 @@ export default function PublicProfileClient({
           </>
         )}
 
-        <p className="text-center font-body text-[10.5px] text-faint mt-6">A digital business card made with TapMe</p>
+        <a
+          href="/login"
+          className="block text-center font-body text-[10.5px] text-faint hover:text-muted mt-6"
+        >
+          Made with TapMe — create your own card →
+        </a>
       </div>
     </MobileShell>
   );
