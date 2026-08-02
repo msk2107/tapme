@@ -1,12 +1,12 @@
 import type { EventRow } from "@/lib/types";
 
-/** Returns today's date (YYYY-MM-DD, KST) */
+/** Returns today's date (YYYY-MM-DD, US Eastern) */
 export function todayISO(): string {
   const now = new Date();
-  const kst = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
-  const y = kst.getFullYear();
-  const m = String(kst.getMonth() + 1).padStart(2, "0");
-  const d = String(kst.getDate()).padStart(2, "0");
+  const et = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+  const y = et.getFullYear();
+  const m = String(et.getMonth() + 1).padStart(2, "0");
+  const d = String(et.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
 

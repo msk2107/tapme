@@ -7,7 +7,7 @@ import type { ExchangeRow, FieldId } from "@/lib/types";
 function formatTime(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleString("en-US", {
-    timeZone: "Asia/Seoul",
+    timeZone: "America/New_York",
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
