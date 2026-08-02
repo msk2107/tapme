@@ -8,6 +8,7 @@ import FieldRow from "@/components/FieldRow";
 import ToggleSwitch from "@/components/ToggleSwitch";
 import { FIELD_ORDER, fieldValue, fieldVisible } from "@/lib/fields";
 import type { FieldId, Profile } from "@/lib/types";
+import UsernameField from "./UsernameField";
 
 export default function EditForm({
   profile,
@@ -91,6 +92,8 @@ export default function EditForm({
           className="flex-1 min-w-0 bg-card border border-border rounded-lg px-2.5 py-2 text-[#D5D8DE] font-body text-[13px] outline-none focus:border-amber/60"
         />
       </div>
+
+      <UsernameField profileId={profile.id} initialUsername={profile.username} />
 
       <Link
         href="/dashboard/events"
