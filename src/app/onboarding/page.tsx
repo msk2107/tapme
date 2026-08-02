@@ -4,7 +4,11 @@ import { createClient } from "@/lib/supabase/server";
 import { suggestUsername } from "@/lib/username";
 import OnboardingForm from "./OnboardingForm";
 
-export default async function OnboardingPage() {
+export default async function OnboardingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ ref?: string }>;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -18,6 +22,7 @@ export default async function OnboardingPage() {
     .maybeSingle();
   if (profile) redirect("/dashboard/edit");
 
+  const { ref } = await searchParams;
   const suggested = suggestUsername(user.email ?? "user");
 
   return (
@@ -28,7 +33,7 @@ export default async function OnboardingPage() {
           Your public profile link will be built from the username below.
         </p>
       </div>
-      <OnboardingForm suggestedUsername={suggested} />
+      <OnboardingForm suggestedUsername={suggested} referrerId={ref} />
     </MobileShell>
   );
 }

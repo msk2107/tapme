@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-export default function LoginForm({ next }: { next?: string }) {
+export default function LoginForm({
+  next,
+  referrerId,
+}: {
+  next?: string;
+  referrerId?: string;
+}) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState("");
@@ -14,8 +20,11 @@ export default function LoginForm({ next }: { next?: string }) {
     setError("");
 
     const supabase = createClient();
-    const redirectTo = `${window.location.origin}/auth/callback${
-      next ? `?next=${encodeURIComponent(next)}` : ""
+    // New signups arriving via a referral link land on /onboarding so the
+    // referral can be recorded there; everyone else goes to their dashboard.
+    const target = next || (referrerId ? "/onboarding" : "/dashboard/edit");
+    const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(target)}${
+      referrerId ? `&ref=${encodeURIComponent(referrerId)}` : ""
     }`;
 
     const { error } = await supabase.auth.signInWithOtp({

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { FIELD_ORDER, fieldValue, fieldVisible } from "@/lib/fields";
 import type { EventRow, FieldId, Profile } from "@/lib/types";
 import PublicProfileClient from "./PublicProfileClient";
@@ -20,6 +21,15 @@ export default async function PublicProfilePage({
     .maybeSingle<Profile>();
 
   if (!profile) notFound();
+
+  // Count this as a view unless the profile owner is looking at their own page.
+  const viewerSupabase = await createClient();
+  const {
+    data: { user: viewer },
+  } = await viewerSupabase.auth.getUser();
+  if (!viewer || viewer.id !== profile.id) {
+    await supabase.from("profile_views").insert({ profile_id: profile.id });
+  }
 
   let eventName: string | null = null;
   if (profile.current_event_id) {

@@ -29,8 +29,40 @@ export default async function HistoryPage() {
     .order("created_at", { ascending: false })
     .returns<ExchangeRow[]>();
 
+  const { count: viewCount } = await supabase
+    .from("profile_views")
+    .select("*", { count: "exact", head: true })
+    .eq("profile_id", user.id);
+
+  const { count: referralCount } = await supabase
+    .from("referrals")
+    .select("*", { count: "exact", head: true })
+    .eq("referrer_id", user.id);
+
   return (
     <div className="px-4 pt-3 pb-6">
+      <div className="grid grid-cols-3 gap-2 mb-4">
+        <div className="bg-card border border-border rounded-xl py-3 text-center">
+          <p className="font-heading text-xl font-bold text-text">{viewCount ?? 0}</p>
+          <p className="font-body text-[10px] text-muted uppercase tracking-wide mt-0.5">Views</p>
+        </div>
+        <div className="bg-card border border-border rounded-xl py-3 text-center">
+          <p className="font-heading text-xl font-bold text-text">{exchanges?.length ?? 0}</p>
+          <p className="font-body text-[10px] text-muted uppercase tracking-wide mt-0.5">Saves</p>
+        </div>
+        <div className="bg-card border border-border rounded-xl py-3 text-center">
+          <p className="font-heading text-xl font-bold text-text">{referralCount ?? 0}</p>
+          <p className="font-body text-[10px] text-muted uppercase tracking-wide mt-0.5">Referrals</p>
+        </div>
+      </div>
+
+      {!!referralCount && referralCount > 0 && (
+        <p className="text-center font-body text-[11.5px] text-muted mb-4">
+          <span className="text-amber font-semibold">{referralCount}</span>{" "}
+          {referralCount === 1 ? "person" : "people"} joined TapMe through your card
+        </p>
+      )}
+
       <p className="font-heading text-xs tracking-wider text-muted uppercase mb-3">
         People who saved your card
       </p>

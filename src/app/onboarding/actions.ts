@@ -46,5 +46,12 @@ export async function createProfile(
     return { error: "Something went wrong creating your profile. Please try again." };
   }
 
+  const ref = String(formData.get("ref") || "").trim();
+  if (ref && ref !== user.id) {
+    // Best-effort: an invalid/unknown ref just fails the FK check silently
+    // and shouldn't block the signup that already succeeded above.
+    await supabase.from("referrals").insert({ referrer_id: ref, referred_user_id: user.id });
+  }
+
   redirect("/dashboard/edit");
 }

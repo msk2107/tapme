@@ -5,11 +5,18 @@ import { createProfile, type OnboardingState } from "./actions";
 
 const initialState: OnboardingState = { error: "" };
 
-export default function OnboardingForm({ suggestedUsername }: { suggestedUsername: string }) {
+export default function OnboardingForm({
+  suggestedUsername,
+  referrerId,
+}: {
+  suggestedUsername: string;
+  referrerId?: string;
+}) {
   const [state, formAction, pending] = useActionState(createProfile, initialState);
 
   return (
     <form action={formAction} className="flex flex-col gap-3 px-4 pb-8">
+      {referrerId && <input type="hidden" name="ref" value={referrerId} />}
       <div>
         <label className="font-body text-[11px] text-muted uppercase tracking-wide mb-1 block">
           Name

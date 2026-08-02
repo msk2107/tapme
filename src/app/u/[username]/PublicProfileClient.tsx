@@ -140,7 +140,7 @@ export default function PublicProfileClient({
               Your contact file has been downloaded.
             </p>
             <a
-              href="/login"
+              href={`/login?ref=${ownerId}`}
               className="inline-flex items-center justify-center gap-1.5 bg-amber text-bg font-body text-[13px] font-bold rounded-lg py-2.5 px-5"
             >
               Make your own TapMe card <ArrowRight size={14} />
@@ -211,7 +211,7 @@ export default function PublicProfileClient({
         )}
 
         <a
-          href="/login"
+          href={`/login?ref=${ownerId}`}
           className="block text-center font-body text-[10.5px] text-faint hover:text-muted mt-6"
         >
           Made with TapMe — create your own card →
