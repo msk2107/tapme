@@ -5,6 +5,21 @@ function escapeVCardText(value: string): string {
   return value.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
 }
 
+/**
+ * Builds the vCard 3.0 `N` (structured name) value: FamilyName;GivenName;;;
+ * `N` is required by the vCard spec — without it, some contact apps (notably
+ * iOS Contacts) silently drop the name even though `FN` is present.
+ */
+function structuredName(fullName: string): string {
+  const trimmed = fullName.trim();
+  if (!trimmed) return ";;;;";
+  const parts = trimmed.split(/\s+/);
+  if (parts.length === 1) return `${escapeVCardText(parts[0])};;;;`;
+  const family = parts[parts.length - 1];
+  const given = parts.slice(0, -1).join(" ");
+  return `${escapeVCardText(family)};${escapeVCardText(given)};;;`;
+}
+
 export interface VCardInfo {
   name: string;
   title?: string;
@@ -16,7 +31,12 @@ export function buildVCardText(
   values: Partial<Record<FieldId, string>>,
   selectedFields: FieldId[]
 ): string {
-  const lines = ["BEGIN:VCARD", "VERSION:3.0", `FN:${escapeVCardText(info.name || "")}`];
+  const lines = [
+    "BEGIN:VCARD",
+    "VERSION:3.0",
+    `N:${structuredName(info.name || "")}`,
+    `FN:${escapeVCardText(info.name || "")}`,
+  ];
   if (info.company) lines.push(`ORG:${escapeVCardText(info.company)}`);
   if (info.title) lines.push(`TITLE:${escapeVCardText(info.title)}`);
 
