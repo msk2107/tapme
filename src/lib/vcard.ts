@@ -24,6 +24,7 @@ export interface VCardInfo {
   name: string;
   title?: string;
   company?: string;
+  eventName?: string | null;
 }
 
 export function buildVCardText(
@@ -39,6 +40,17 @@ export function buildVCardText(
   ];
   if (info.company) lines.push(`ORG:${escapeVCardText(info.company)}`);
   if (info.title) lines.push(`TITLE:${escapeVCardText(info.title)}`);
+
+  const savedOn = new Date().toLocaleDateString("en-US", {
+    timeZone: "America/New_York",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+  const note = info.eventName
+    ? `Saved via TapMe at ${info.eventName} on ${savedOn}`
+    : `Saved via TapMe on ${savedOn}`;
+  lines.push(`NOTE:${escapeVCardText(note)}`);
 
   for (const id of selectedFields) {
     const value = values[id];

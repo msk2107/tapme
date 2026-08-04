@@ -72,7 +72,7 @@ export default function PublicProfileClient({
     if (chosen.length === 0) return;
     setPending(true);
 
-    const text = buildVCardText({ name, title, company }, values, chosen);
+    const text = buildVCardText({ name, title, company, eventName }, values, chosen);
     const blob = new Blob([text], { type: "text/vcard" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
