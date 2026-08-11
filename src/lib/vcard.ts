@@ -6,6 +6,22 @@ function escapeVCardText(value: string): string {
 }
 
 /**
+ * vCard lines must be folded at 75 octets, with continuation lines starting
+ * with a single space (RFC 2426 §2.6). Only the PHOTO line is long enough
+ * to matter here — everything else is well under the limit.
+ */
+function foldLine(line: string): string {
+  if (line.length <= 75) return line;
+  const parts = [line.slice(0, 75)];
+  let i = 75;
+  while (i < line.length) {
+    parts.push(` ${line.slice(i, i + 74)}`);
+    i += 74;
+  }
+  return parts.join("\r\n");
+}
+
+/**
  * Builds the vCard 3.0 `N` (structured name) value: FamilyName;GivenName;;;
  * `N` is required by the vCard spec — without it, some contact apps (notably
  * iOS Contacts) silently drop the name even though `FN` is present.
@@ -25,6 +41,7 @@ export interface VCardInfo {
   title?: string;
   company?: string;
   eventName?: string | null;
+  photo?: { base64: string; mimeType: string } | null;
 }
 
 export function buildVCardText(
@@ -40,6 +57,9 @@ export function buildVCardText(
   ];
   if (info.company) lines.push(`ORG:${escapeVCardText(info.company)}`);
   if (info.title) lines.push(`TITLE:${escapeVCardText(info.title)}`);
+  if (info.photo) {
+    lines.push(foldLine(`PHOTO;ENCODING=b;TYPE=${info.photo.mimeType}:${info.photo.base64}`));
+  }
 
   const savedOn = new Date().toLocaleDateString("en-US", {
     timeZone: "America/New_York",

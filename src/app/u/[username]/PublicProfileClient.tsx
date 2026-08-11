@@ -12,6 +12,43 @@ import type { FieldId } from "@/lib/types";
 
 const DEEP_LINK_FIELDS = new Set<FieldId>(["kakao", "instagram", "linkedin", "facebook"]);
 
+/**
+ * Downscales the avatar to a small JPEG and returns it as base64 for
+ * embedding in the vCard's PHOTO field. Contact-app photos don't need to be
+ * full resolution, and vCard payload size adds up fast with raw uploads.
+ */
+async function loadAvatarPhoto(avatarUrl: string): Promise<{ base64: string; mimeType: string } | null> {
+  try {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    const loaded = new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("image load failed"));
+    });
+    img.src = avatarUrl;
+    await loaded;
+
+    const maxSize = 240;
+    const scale = Math.min(1, maxSize / Math.max(img.naturalWidth, img.naturalHeight));
+    const w = Math.round(img.naturalWidth * scale);
+    const h = Math.round(img.naturalHeight * scale);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+    const base64 = dataUrl.split(",")[1];
+    if (!base64) return null;
+    return { base64, mimeType: "JPEG" };
+  } catch {
+    return null;
+  }
+}
+
 interface Props {
   ownerId: string;
   name: string;
@@ -115,7 +152,8 @@ export default function PublicProfileClient({
     if (chosen.length === 0) return;
     setPending(true);
 
-    const text = buildVCardText({ name, title, company, eventName }, values, chosen);
+    const photo = avatarUrl ? await loadAvatarPhoto(avatarUrl) : null;
+    const text = buildVCardText({ name, title, company, eventName, photo }, values, chosen);
     const blob = new Blob([text], { type: "text/vcard" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
