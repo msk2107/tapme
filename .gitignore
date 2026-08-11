@@ -43,3 +43,6 @@ next-env.d.ts
 
 # Claude Code local session artifacts
 .claude/scheduled_tasks.lock
+
+# local-only, never commit (contains a real credential)
+"API key.txt"

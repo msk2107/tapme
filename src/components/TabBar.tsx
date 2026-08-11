@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Pencil, CalendarClock, Radio, History } from "lucide-react";
+import { Pencil, CalendarClock, Radio, History, WalletCards } from "lucide-react";
 
 const TABS = [
   { href: "/dashboard/edit", label: "My Card", icon: Pencil },
   { href: "/dashboard/events", label: "Events", icon: CalendarClock },
   { href: "/dashboard/share", label: "Share", icon: Radio },
   { href: "/dashboard/history", label: "History", icon: History },
+  { href: "/dashboard/cards", label: "Cards", icon: WalletCards },
 ];
 
 export default function TabBar() {

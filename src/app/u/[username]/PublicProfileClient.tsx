@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { ArrowRight, Check, Download, ExternalLink, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Download, ExternalLink, Send, Sparkles } from "lucide-react";
 import MobileShell from "@/components/MobileShell";
 import { FIELD_META, channelHref } from "@/lib/fields";
 import { buildVCardText, vcardFilename } from "@/lib/vcard";
@@ -48,10 +48,43 @@ export default function PublicProfileClient({
   const [pending, setPending] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [feedbackSent, setFeedbackSent] = useState(false);
+  const [viewer, setViewer] = useState<{ loading: boolean; userId: string | null; name: string | null }>({
+    loading: true,
+    userId: null,
+    name: null,
+  });
+  const [visitorName, setVisitorName] = useState("");
+  const canShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
 
   const badge = foundingLabel(signupNumber);
 
+  useEffect(() => {
+    (async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        setViewer({ loading: false, userId: null, name: null });
+        return;
+      }
+      const { data: viewerProfile } = await supabase
+        .from("profiles")
+        .select("name")
+        .eq("id", user.id)
+        .maybeSingle<{ name: string }>();
+      setViewer({ loading: false, userId: user.id, name: viewerProfile?.name || user.email || null });
+    })();
+  }, []);
+
   const toggle = (id: FieldId) => setSelected((s) => ({ ...s, [id]: !s[id] }));
+
+  const shareGreeting = () => {
+    if (!canShare) return;
+    navigator.share({ text: `Great meeting you, ${name}!`, url: publicUrl }).catch(() => {
+      // User cancelled the share sheet or it failed silently — nothing to do.
+    });
+  };
 
   const sendFeedback = async () => {
     if (!feedback.trim()) return;
@@ -84,25 +117,13 @@ export default function PublicProfileClient({
     URL.revokeObjectURL(url);
 
     try {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      let viewerName: string | null = null;
-      if (user) {
-        const { data: viewerProfile } = await supabase
-          .from("profiles")
-          .select("name")
-          .eq("id", user.id)
-          .maybeSingle<{ name: string }>();
-        viewerName = viewerProfile?.name || user.email || null;
-      }
+      const viewerName = viewer.userId ? viewer.name : visitorName.trim() || null;
       await fetch("/api/exchanges", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ownerId,
-          viewerId: user?.id ?? null,
+          viewerId: viewer.userId,
           viewerName,
           eventName,
           savedFields: chosen,
@@ -165,6 +186,16 @@ export default function PublicProfileClient({
             <p className="font-body text-[12.5px] text-muted mb-5">
               Your contact file has been downloaded.
             </p>
+
+            {canShare && (
+              <button
+                type="button"
+                onClick={shareGreeting}
+                className="w-full flex items-center justify-center gap-2 border border-border rounded-lg py-2.5 mb-5 font-body text-[12.5px] font-semibold text-text hover:border-amber/60 cursor-pointer"
+              >
+                <Send size={13} /> Send a greeting
+              </button>
+            )}
 
             {feedbackSent ? (
               <p className="font-body text-[11.5px] text-success mb-5">Thanks for the feedback!</p>
@@ -246,6 +277,15 @@ export default function PublicProfileClient({
                 );
               })}
             </div>
+
+            {!viewer.loading && !viewer.userId && (
+              <input
+                value={visitorName}
+                onChange={(e) => setVisitorName(e.target.value)}
+                placeholder="What's your name? (optional)"
+                className="w-full bg-card border border-border rounded-lg px-3 py-2.5 mb-3 text-text font-body text-[13px] outline-none focus:border-amber/60"
+              />
+            )}
 
             <button
               type="button"
