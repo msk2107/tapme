@@ -79,9 +79,19 @@ export default function PublicProfileClient({
 
   const toggle = (id: FieldId) => setSelected((s) => ({ ...s, [id]: !s[id] }));
 
+  const greetingText = `Great meeting you, ${name}!`;
+
+  // If the owner's phone is public, prefill the Messages app's "To" field
+  // directly via an sms: link — navigator.share has no way to set a
+  // recipient, it only ever prefills content into whichever app is picked.
+  const ownerPhone = values.phone?.trim();
+  const smsGreetingHref = ownerPhone
+    ? `sms:${ownerPhone.replace(/\s+/g, "")}?body=${encodeURIComponent(greetingText)}`
+    : null;
+
   const shareGreeting = () => {
     if (!canShare) return;
-    navigator.share({ text: `Great meeting you, ${name}!`, url: publicUrl }).catch(() => {
+    navigator.share({ text: greetingText, url: publicUrl }).catch(() => {
       // User cancelled the share sheet or it failed silently — nothing to do.
     });
   };
@@ -187,14 +197,23 @@ export default function PublicProfileClient({
               Your contact file has been downloaded.
             </p>
 
-            {canShare && (
-              <button
-                type="button"
-                onClick={shareGreeting}
-                className="w-full flex items-center justify-center gap-2 border border-border rounded-lg py-2.5 mb-5 font-body text-[12.5px] font-semibold text-text hover:border-amber/60 cursor-pointer"
+            {smsGreetingHref ? (
+              <a
+                href={smsGreetingHref}
+                className="w-full flex items-center justify-center gap-2 border border-border rounded-lg py-2.5 mb-5 font-body text-[12.5px] font-semibold text-text hover:border-amber/60"
               >
                 <Send size={13} /> Send a greeting
-              </button>
+              </a>
+            ) : (
+              canShare && (
+                <button
+                  type="button"
+                  onClick={shareGreeting}
+                  className="w-full flex items-center justify-center gap-2 border border-border rounded-lg py-2.5 mb-5 font-body text-[12.5px] font-semibold text-text hover:border-amber/60 cursor-pointer"
+                >
+                  <Send size={13} /> Send a greeting
+                </button>
+              )
             )}
 
             {feedbackSent ? (
