@@ -85,9 +85,11 @@ export function buildVCardText(
       case "linkedin":
         lines.push(`URL;TYPE=LinkedIn:https://${value.replace(/^https?:\/\//i, "")}`);
         break;
-      case "instagram":
-        lines.push(`URL;TYPE=Instagram:https://instagram.com/${value.replace(/^@/, "")}`);
+      case "instagram": {
+        const handle = value.replace(/^@/, "").replace(/^https?:\/\/(www\.)?instagram\.com\//i, "");
+        lines.push(`URL;TYPE=Instagram:https://instagram.com/${handle}`);
         break;
+      }
       case "facebook":
         lines.push(`URL;TYPE=Facebook:https://${value.replace(/^https?:\/\//i, "")}`);
         break;
