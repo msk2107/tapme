@@ -42,6 +42,12 @@ export default async function LandingPage() {
         >
           {user ? "Go to my dashboard" : "Get started"}
         </Link>
+        <Link
+          href="/how-it-works"
+          className="block w-full text-center mt-3 font-body text-[13px] font-semibold text-muted-2 hover:text-text"
+        >
+          How it works
+        </Link>
       </div>
     </div>
   );
