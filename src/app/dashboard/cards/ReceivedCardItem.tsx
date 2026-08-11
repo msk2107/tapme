@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Download, Trash2, ImageOff } from "lucide-react";
+import { Download, Trash2, ImageOff, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { buildVCardText, vcardFilename } from "@/lib/vcard";
 
@@ -18,6 +18,7 @@ interface Card {
 export default function ReceivedCardItem({ card }: { card: Card }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const downloadVCard = () => {
     const text = buildVCardText({ name: card.name, eventName: card.event_name }, {}, []);
@@ -45,8 +46,15 @@ export default function ReceivedCardItem({ card }: { card: Card }) {
     <div className="bg-card border border-border rounded-xl overflow-hidden">
       <div className="aspect-[3/2] bg-bg flex items-center justify-center">
         {card.photoUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={card.photoUrl} alt={card.name} className="w-full h-full object-cover" />
+          <button
+            type="button"
+            onClick={() => setExpanded(true)}
+            className="w-full h-full cursor-zoom-in"
+            aria-label="Enlarge photo"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={card.photoUrl} alt={card.name} className="w-full h-full object-cover" />
+          </button>
         ) : (
           <ImageOff size={18} className="text-faint" />
         )}
@@ -76,6 +84,29 @@ export default function ReceivedCardItem({ card }: { card: Card }) {
           </button>
         </div>
       </div>
+
+      {expanded && card.photoUrl && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setExpanded(false)}
+        >
+          <button
+            type="button"
+            onClick={() => setExpanded(false)}
+            aria-label="Close"
+            className="absolute top-4 right-4 text-white/80 hover:text-white cursor-pointer"
+          >
+            <X size={24} />
+          </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={card.photoUrl}
+            alt={card.name}
+            className="max-w-full max-h-full object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }
