@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, AlertTriangle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import FieldRow from "@/components/FieldRow";
 import ToggleSwitch from "@/components/ToggleSwitch";
@@ -31,6 +31,14 @@ export default function EditForm({
 
   const toggleVisible = (id: FieldId) =>
     setCard((c) => ({ ...c, [`${id}_visible`]: !fieldVisible(c, id) }));
+
+  // A plain KakaoTalk ID can't be turned into a working link — only an Open
+  // Chat URL (open.kakao.com/o/...) is clickable. Warn before that ships to
+  // a saved vCard as a dead link.
+  const isKakaoLinkValid = (value: string) => {
+    const v = value.trim();
+    return !v || /^(https?:\/\/)?open\.kakao\.com\//i.test(v);
+  };
 
   useEffect(() => {
     if (skipFirst.current) {
@@ -116,18 +124,27 @@ export default function EditForm({
         Share channels (toggle on the right to show/hide)
       </p>
       {FIELD_ORDER.map((id) => (
-        <div key={id} className="flex items-center gap-2">
-          <div className="flex-1 min-w-0">
-            <FieldRow
-              id={id}
-              value={fieldValue(card, id)}
-              onChange={updateFieldValue}
-              disabled={!fieldVisible(card, id)}
-            />
+        <div key={id}>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 min-w-0">
+              <FieldRow
+                id={id}
+                value={fieldValue(card, id)}
+                onChange={updateFieldValue}
+                disabled={!fieldVisible(card, id)}
+              />
+            </div>
+            <div className="mb-2.5">
+              <ToggleSwitch checked={fieldVisible(card, id)} onChange={() => toggleVisible(id)} />
+            </div>
           </div>
-          <div className="mb-2.5">
-            <ToggleSwitch checked={fieldVisible(card, id)} onChange={() => toggleVisible(id)} />
-          </div>
+          {id === "kakao" && !isKakaoLinkValid(card.kakao_value) && (
+            <p className="flex items-start gap-1.5 -mt-1.5 mb-2.5 font-body text-[11px] text-amber">
+              <AlertTriangle size={12} className="shrink-0 mt-0.5" />
+              This needs to be an Open Chat link (open.kakao.com/o/...) to work
+              as a clickable button — a plain KakaoTalk ID won&apos;t connect.
+            </p>
+          )}
         </div>
       ))}
 
