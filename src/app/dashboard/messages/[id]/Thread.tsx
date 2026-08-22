@@ -29,10 +29,33 @@ export default function Thread({
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: "end" });
   }, [messages.length]);
+
+  // Mobile browsers don't shrink 100dvh when the on-screen keyboard opens —
+  // they just overlay the keyboard on top, covering the composer. Track the
+  // real visible height via visualViewport and size the fixed frame to it,
+  // so the composer (and the message being typed) stays on-screen instead
+  // of requiring a scroll to find.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const sync = () => {
+      if (rootRef.current) rootRef.current.style.height = `${vv.height}px`;
+      window.scrollTo(0, 0);
+      bottomRef.current?.scrollIntoView({ block: "end" });
+    };
+    sync();
+    vv.addEventListener("resize", sync);
+    vv.addEventListener("scroll", sync);
+    return () => {
+      vv.removeEventListener("resize", sync);
+      vv.removeEventListener("scroll", sync);
+    };
+  }, []);
 
   // Mark the other person's unread messages as read once this thread is open.
   useEffect(() => {
@@ -96,7 +119,7 @@ export default function Thread({
   };
 
   return (
-    <div className="fixed inset-x-0 top-0 h-dvh z-40 bg-bg flex flex-col">
+    <div ref={rootRef} className="fixed inset-x-0 top-0 h-dvh z-40 bg-bg flex flex-col">
       <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border shrink-0">
         <Link href="/dashboard/messages" aria-label="Back" className="text-muted hover:text-text">
           <ArrowLeft size={18} />
