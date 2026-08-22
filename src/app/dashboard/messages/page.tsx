@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { ConversationRow, MessageRow } from "@/lib/types";
+import NewChatSearch from "./NewChatSearch";
 
 export default async function MessagesPage() {
   const supabase = await createClient();
@@ -21,9 +23,13 @@ export default async function MessagesPage() {
   const convoIds = (conversations ?? []).map((c) => c.id);
   const otherIds = (conversations ?? []).map((c) => (c.user_a_id === user.id ? c.user_b_id : c.user_a_id));
 
+  // profiles RLS is "own row only" — reading the other participant's
+  // name/avatar needs the service-role client, same as everywhere else in
+  // the app that shows another user's public info (e.g. /u/[username]).
+  const admin = createAdminClient();
   const [{ data: profiles }, { data: messages }] = await Promise.all([
     otherIds.length
-      ? supabase.from("profiles").select("id, name, avatar_url").in("id", otherIds)
+      ? admin.from("profiles").select("id, name, avatar_url").in("id", otherIds)
       : Promise.resolve({ data: [] }),
     convoIds.length
       ? supabase
@@ -46,6 +52,8 @@ export default async function MessagesPage() {
   return (
     <div className="px-4 pt-3 pb-6">
       <p className="font-heading text-xs tracking-wider text-muted uppercase mb-3">Chats</p>
+
+      <NewChatSearch myId={user.id} />
 
       {(!conversations || conversations.length === 0) && (
         <div className="text-center py-10 text-faint font-body text-[12.5px] leading-relaxed">

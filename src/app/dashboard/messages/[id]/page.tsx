@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { ConversationRow, MessageRow } from "@/lib/types";
 import Thread from "./Thread";
 
@@ -22,7 +23,9 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
   if (!conversation) notFound();
 
   const otherId = conversation.user_a_id === user.id ? conversation.user_b_id : conversation.user_a_id;
-  const { data: other } = await supabase
+  // profiles RLS is "own row only" — same fix as the conversation list page.
+  const admin = createAdminClient();
+  const { data: other } = await admin
     .from("profiles")
     .select("id, name, avatar_url")
     .eq("id", otherId)

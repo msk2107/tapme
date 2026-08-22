@@ -17,7 +17,7 @@ import { FIELD_META, channelHref } from "@/lib/fields";
 import { buildVCardText, vcardFilename } from "@/lib/vcard";
 import { createClient } from "@/lib/supabase/client";
 import { foundingLabel } from "@/lib/founding";
-import { sortedPair } from "@/lib/conversations";
+import { findOrCreateConversation } from "@/lib/conversations";
 import type { FieldId } from "@/lib/types";
 
 const DEEP_LINK_FIELDS = new Set<FieldId>(["kakao", "instagram", "linkedin", "facebook"]);
@@ -149,29 +149,10 @@ export default function PublicProfileClient({
     if (!viewer.userId) return;
     setMessagePending(true);
     const supabase = createClient();
-    const [user_a_id, user_b_id] = sortedPair(viewer.userId, ownerId);
-
-    const { data: existing } = await supabase
-      .from("conversations")
-      .select("id")
-      .eq("user_a_id", user_a_id)
-      .eq("user_b_id", user_b_id)
-      .maybeSingle<{ id: string }>();
-
-    if (existing) {
-      router.push(`/dashboard/messages/${existing.id}`);
-      return;
-    }
-
-    const { data: created, error } = await supabase
-      .from("conversations")
-      .insert({ user_a_id, user_b_id })
-      .select("id")
-      .single<{ id: string }>();
-
+    const conversationId = await findOrCreateConversation(supabase, viewer.userId, ownerId);
     setMessagePending(false);
-    if (error || !created) return;
-    router.push(`/dashboard/messages/${created.id}`);
+    if (!conversationId) return;
+    router.push(`/dashboard/messages/${conversationId}`);
   };
 
   const sendFeedback = async () => {
