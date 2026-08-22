@@ -37,6 +37,18 @@ body {
   font-family: var(--font-body), sans-serif;
 }
 
+/* iOS Safari auto-zooms the whole page when a focused input's font-size is
+   under 16px. Our inputs use smaller sizes for the tight card layout, which
+   made focusing any of them (most visibly the chat composer) suddenly zoom
+   and shift the page, cutting off nearby buttons until you pinch back out. */
+@media (max-width: 639px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
 @keyframes tap-ripple {
   0% {
     transform: scale(1);
