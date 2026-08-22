@@ -96,7 +96,7 @@ export default function Thread({
   };
 
   return (
-    <div className="fixed inset-0 z-40 bg-bg flex flex-col">
+    <div className="fixed inset-x-0 top-0 h-dvh z-40 bg-bg flex flex-col">
       <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border shrink-0">
         <Link href="/dashboard/messages" aria-label="Back" className="text-muted hover:text-text">
           <ArrowLeft size={18} />
@@ -136,7 +136,10 @@ export default function Thread({
         <div ref={bottomRef} />
       </div>
 
-      <div className="flex items-center gap-2 px-4 py-3 border-t border-border shrink-0">
+      <div
+        className="flex items-center gap-2 px-4 pt-3 border-t border-border shrink-0"
+        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+      >
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
