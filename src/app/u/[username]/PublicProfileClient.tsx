@@ -1,13 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
-import { ArrowRight, Check, Download, ExternalLink, Send, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Download,
+  ExternalLink,
+  MessageCircle,
+  Send,
+  Sparkles,
+} from "lucide-react";
 import MobileShell from "@/components/MobileShell";
 import { FIELD_META, channelHref } from "@/lib/fields";
 import { buildVCardText, vcardFilename } from "@/lib/vcard";
 import { createClient } from "@/lib/supabase/client";
 import { foundingLabel } from "@/lib/founding";
+import { sortedPair } from "@/lib/conversations";
 import type { FieldId } from "@/lib/types";
 
 const DEEP_LINK_FIELDS = new Set<FieldId>(["kakao", "instagram", "linkedin", "facebook"]);
@@ -74,6 +84,7 @@ export default function PublicProfileClient({
   values,
   publicUrl,
 }: Props) {
+  const router = useRouter();
   const [selected, setSelected] = useState<Partial<Record<FieldId, boolean>>>(() => {
     const init: Partial<Record<FieldId, boolean>> = {};
     visibleFields.forEach((id) => {
@@ -91,6 +102,7 @@ export default function PublicProfileClient({
     name: null,
   });
   const [visitorName, setVisitorName] = useState("");
+  const [messagePending, setMessagePending] = useState(false);
   const canShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
 
   const badge = foundingLabel(signupNumber);
@@ -131,6 +143,35 @@ export default function PublicProfileClient({
     navigator.share({ text: greetingText, url: publicUrl }).catch(() => {
       // User cancelled the share sheet or it failed silently — nothing to do.
     });
+  };
+
+  const startConversation = async () => {
+    if (!viewer.userId) return;
+    setMessagePending(true);
+    const supabase = createClient();
+    const [user_a_id, user_b_id] = sortedPair(viewer.userId, ownerId);
+
+    const { data: existing } = await supabase
+      .from("conversations")
+      .select("id")
+      .eq("user_a_id", user_a_id)
+      .eq("user_b_id", user_b_id)
+      .maybeSingle<{ id: string }>();
+
+    if (existing) {
+      router.push(`/dashboard/messages/${existing.id}`);
+      return;
+    }
+
+    const { data: created, error } = await supabase
+      .from("conversations")
+      .insert({ user_a_id, user_b_id })
+      .select("id")
+      .single<{ id: string }>();
+
+    setMessagePending(false);
+    if (error || !created) return;
+    router.push(`/dashboard/messages/${created.id}`);
   };
 
   const sendFeedback = async () => {
@@ -220,6 +261,16 @@ export default function PublicProfileClient({
             <span className="inline-flex items-center gap-1 mt-2 font-body text-[11px] font-semibold text-amber bg-amber/10 border border-amber/30 rounded-full px-2.5 py-1">
               <Sparkles size={11} /> {eventName}
             </span>
+          )}
+          {viewer.userId && viewer.userId !== ownerId && (
+            <button
+              type="button"
+              onClick={startConversation}
+              disabled={messagePending}
+              className="flex items-center gap-1.5 mx-auto mt-3 border border-border rounded-full px-3.5 py-1.5 font-body text-[12px] font-semibold text-text hover:border-amber/60 cursor-pointer disabled:opacity-60"
+            >
+              <MessageCircle size={13} /> {messagePending ? "Opening..." : "Message"}
+            </button>
           )}
         </div>
 

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>TapMe 카드뉴스</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E1014;
+    --panel:#1B1E25;
+    --line:#2A2D35;
+    --amber:#E8A33D;
+    --amber-soft:#F4C572;
+    --text:#F7F5F1;
+    --text-dim:#9CA3AF;
+    --text-faint:#5A6070;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:#05060A;
+    display:flex;
+    justify-content:center;
+    padding:30px 16px;
+    font-family:'Inter',sans-serif;
+  }
+  .card{
+    width:640px;
+    height:640px;
+    max-width:100%;
+    aspect-ratio:1/1;
+    background:var(--ink);
+    color:var(--text);
+    border-radius:28px;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 40px 100px rgba(0,0,0,0.55);
+  }
+  .ripple-bg{ position:absolute; top:-140px; right:-140px; width:400px; height:400px; pointer-events:none; }
+  .ripple-bg circle{ fill:none; stroke:var(--amber); }
+
+  .top{ padding:38px 38px 0; }
+  .brandmark{ display:flex; align-items:center; gap:10px; margin-bottom:22px; }
+  .brandmark .t{
+    width:32px; height:32px; border-radius:9px; background:var(--amber);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:16px; color:var(--ink);
+  }
+  .brandmark .name{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:16px; }
+
+  h1{
+    font-family:'Space Grotesk',sans-serif; font-weight:600;
+    font-size:29px; line-height:1.28; letter-spacing:-0.5px;
+    max-width:420px;
+  }
+  h1 em{ font-style:normal; color:var(--amber); }
+
+  .steps{
+    flex:1;
+    padding:26px 38px 0;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .step{
+    display:flex; align-items:center; gap:16px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:15px 18px;
+  }
+  .step .n{
+    width:34px; height:34px; border-radius:10px; flex-shrink:0;
+    background:rgba(232,163,61,0.12); border:1px solid rgba(232,163,61,0.35);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--amber-soft);
+  }
+  .step .body h3{
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14.5px; margin-bottom:2px;
+  }
+  .step .body p{
+    font-size:12px; color:var(--text-dim); line-height:1.5;
+  }
+
+  .footer{
+    margin-top:auto;
+    padding:24px 38px 32px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-top:1px solid var(--line);
+  }
+  .footer .cta{
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14px;
+  }
+  .footer .cta .link{
+    display:block; margin-top:4px;
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--amber-soft);
+  }
+  .qr-box{
+    width:56px; height:56px; border-radius:10px; border:1.5px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text-faint); font-size:10px; font-family:'JetBrains Mono',monospace;
+    flex-shrink:0;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <svg class="ripple-bg" viewBox="0 0 400 400">
+    <circle cx="200" cy="200" r="45" opacity="0.5"/>
+    <circle cx="200" cy="200" r="90" opacity="0.28"/>
+    <circle cx="200" cy="200" r="140" opacity="0.14"/>
+  </svg>
+
+  <div class="top">
+    <div class="brandmark">
+      <div class="t">T</div>
+      <div class="name">TapMe</div>
+    </div>
+    <h1>종이 명함 없이,<br><em>탭 한 번으로</em> 연결됩니다</h1>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="n">1</div>
+      <div class="body">
+        <h3>탭하거나 QR 스캔</h3>
+        <p>앱 설치 없이, 폰만 있으면 바로 열려요</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="n">2</div>
+      <div class="body">
+        <h3>원하는 정보만 선택</h3>
+        <p>카톡·인스타·링크드인·전화·이메일, 필요한 것만 골라 저장</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="n">3</div>
+      <div class="body">
+        <h3>어디서 만났는지 자동 기록</h3>
+        <p>연락처에 행사명까지 남아, 나중에 봐도 바로 기억나요</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="cta">나도 만들어보기<span class="link">tapme-topaz.vercel.app</span></div>
+    <div class="qr-box">QR</div>
+  </div>
+</div>
+</body>
+</html>

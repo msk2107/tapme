@@ -45,4 +45,4 @@ next-env.d.ts
 .claude/scheduled_tasks.lock
 
 # local-only, never commit (contains a real credential)
-"API key.txt"
+API key.txt

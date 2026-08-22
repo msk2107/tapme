@@ -78,3 +78,22 @@ export interface FeedbackRow {
   message: string;
   created_at: string;
 }
+
+export interface ConversationRow {
+  id: string;
+  user_a_id: string;
+  user_b_id: string;
+  created_at: string;
+  last_message_at: string;
+}
+
+export interface MessageRow {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  recipient_id: string;
+  sender_name: string;
+  body: string;
+  created_at: string;
+  read_at: string | null;
+}

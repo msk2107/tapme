@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Pencil, CalendarClock, Radio, History, WalletCards } from "lucide-react";
+import { Pencil, CalendarClock, Radio, History, WalletCards, MessageCircle } from "lucide-react";
 
 const TABS = [
   { href: "/dashboard/edit", label: "My Card", icon: Pencil },
@@ -10,6 +10,7 @@ const TABS = [
   { href: "/dashboard/share", label: "Share", icon: Radio },
   { href: "/dashboard/history", label: "History", icon: History },
   { href: "/dashboard/cards", label: "Cards", icon: WalletCards },
+  { href: "/dashboard/messages", label: "Chat", icon: MessageCircle },
 ];
 
 export default function TabBar() {

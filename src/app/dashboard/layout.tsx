@@ -3,7 +3,7 @@ import { Megaphone } from "lucide-react";
 import MobileShell from "@/components/MobileShell";
 import TabBar from "@/components/TabBar";
 import EventBanner from "@/components/EventBanner";
-import SaveNotifications from "@/components/SaveNotifications";
+import DashboardNotifications from "@/components/DashboardNotifications";
 import { createClient } from "@/lib/supabase/server";
 import { findTodaysEvent, todayISO } from "@/lib/events";
 import type { AnnouncementRow, EventRow, Profile } from "@/lib/types";
@@ -50,7 +50,7 @@ export default async function DashboardLayout({
 
   return (
     <MobileShell footer={<TabBar />}>
-      <SaveNotifications userId={user.id} />
+      <DashboardNotifications userId={user.id} />
       {announcement && (
         <div className="mx-4 mt-3 rounded-xl border border-border bg-card px-3.5 py-2.5 flex items-start gap-2.5 shrink-0">
           <Megaphone size={15} className="text-amber shrink-0 mt-0.5" />
