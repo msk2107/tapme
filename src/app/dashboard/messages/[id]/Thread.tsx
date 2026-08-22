@@ -96,7 +96,7 @@ export default function Thread({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="fixed inset-0 z-40 bg-bg flex flex-col">
       <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border shrink-0">
         <Link href="/dashboard/messages" aria-label="Back" className="text-muted hover:text-text">
           <ArrowLeft size={18} />
