@@ -38,6 +38,8 @@ export async function createProfile(
     id: user.id,
     username,
     name,
+    // They already typed this once to sign up — don't make them type it again.
+    email_value: user.email ?? "",
   });
 
   if (error) {
